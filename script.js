@@ -5,6 +5,7 @@ class PomodoroTimer {
         this.isWorking = true;
         this.isRunning = false;
         this.timer = null;
+        this.pomodoroCount = 0; // ポモドーロ回数
         
         this.initializeElements();
         this.setupEventListeners();
@@ -17,6 +18,7 @@ class PomodoroTimer {
         this.resetButton = document.getElementById('reset');
         this.workInput = document.getElementById('work');
         this.breakInput = document.getElementById('break');
+        this.pomodoroCountElement = document.getElementById('pomodoro-count');
     }
 
     setupEventListeners() {
@@ -44,6 +46,10 @@ class PomodoroTimer {
                 this.updateDisplay();
             } else {
                 this.stopTimer();
+                // 作業セッションが終わったらカウントを増やす
+                if (this.isWorking) {
+                    this.pomodoroCount++;
+                }
                 this.isWorking = !this.isWorking;
                 
                 if (this.isWorking) {
@@ -51,7 +57,7 @@ class PomodoroTimer {
                 } else {
                     this.workTime = this.breakInput.value * 60;
                 }
-                
+                this.updateDisplay();
                 this.startTimer();
             }
         }, 1000);
@@ -67,6 +73,7 @@ class PomodoroTimer {
         this.stopTimer();
         this.workTime = this.workInput.value * 60;
         this.isWorking = true;
+        this.pomodoroCount = 0;
         this.updateDisplay();
     }
 
@@ -88,6 +95,9 @@ class PomodoroTimer {
         const minutes = Math.floor(this.workTime / 60);
         const seconds = this.workTime % 60;
         this.timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        if (this.pomodoroCountElement) {
+            this.pomodoroCountElement.textContent = `ポモドーロ回数: ${this.pomodoroCount}`;
+        }
     }
 }
 
